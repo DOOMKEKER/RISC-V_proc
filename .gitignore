@@ -55,6 +55,7 @@
 *example*
 *sopc_*
 # *.sdc # I want those timing files
+<<<<<<< HEAD
 # ignore Quartus II generated folders
 /db
 /simulation
@@ -62,6 +63,10 @@
 *.tdf
 *.cnb
 */modelsim/
+=======
+
+# ignore Quartus II generated folders
+>>>>>>> f970c41691f581e89050fee331bbe375da0f0529
 */db/
 */incremental_db/
 */simulation/
