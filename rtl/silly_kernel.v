@@ -2,15 +2,16 @@ module silly_kernel
 (
   input           clk_i,
   input    [9:0]  SW_i,
+  input           reset,
 
   output   [6:0]  HEX_1_o,
   output   [6:0]  HEX_2_o
+
 );
 
 reg     	[31:0]   instruction_addr;
 wire     [31:0]   instruction;
 reg     	[31:0]   WD3;
-reg               reset;
 wire     [31:0]   RD_1;
 wire     [31:0]   RD_2;
 wire     [31:0]   result;
@@ -55,22 +56,22 @@ miriscv_alu dut(
 
 wire     [31:0]   SE;
 
-assign  SE =  {{22{instruction[7]}},{instruction[7:0],2'b00}};
+assign  SE =  {{24{instruction[7]}},instruction[7:0]};
 
 always @ (posedge clk_i)
 begin
 	if (reset) instruction_addr <= 32'b0;
 	else if (instruction[31])
-		instruction_addr <= instruction_addr + $signed(SE);
+		instruction_addr <= instruction_addr + (SE << 2);
 	else if (instruction[30])
 				begin
 					if (comparsion_result == 1)
-						instruction_addr <= instruction_addr + instruction[7:0];
+						instruction_addr <= instruction_addr + (SE << 2);
 					else
-						instruction_addr <= instruction_addr + 32'd1;//4
+						instruction_addr <= instruction_addr + 32'd4;
 				end
 	else
-		instruction_addr <= instruction_addr + 32'd1;
+		instruction_addr <= instruction_addr + 32'd4;
 end
 
 

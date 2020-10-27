@@ -10,7 +10,7 @@ reg [31:0] data [0:63];
 initial $readmemb ("E:/Studies/3_course/1_semestr/FPGA/labs/rtl/data.txt", data);
 
 always @ ( * ) begin
-      rd_o <= data[addr_i];//
+      rd_o <= data[addr_i[31:2]];//
 end
 
 endmodule
