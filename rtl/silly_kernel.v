@@ -17,7 +17,7 @@ wire     [31:0]   RD_2;
 wire     [31:0]   result;
 wire              comparsion_result;
 
-initial instruction_addr <= 0;
+initial instruction_addr <= 32'h66000000;
 
 HEX kek(
    .in		 (RD_1[3:0]),
@@ -60,7 +60,7 @@ assign  SE =  {{24{instruction[7]}},instruction[7:0]};
 
 always @ (posedge clk_i)
 begin
-	if (reset) instruction_addr <= 32'b0;
+	if (reset) instruction_addr <= 32'h66000000;
 	else if (instruction[31])
 		instruction_addr <= instruction_addr + (SE << 2);
 	else if (instruction[30])

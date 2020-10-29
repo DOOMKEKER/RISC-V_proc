@@ -19,7 +19,7 @@ task silly_kernel_tb_test;
 	input integer SW;
 	begin
 	SW_i = SW;
-	#10
+	#100
 	$display("--------------------------------------------");
    $display("SW     addr_1_i = %d   ", SW_i );
    $display("HEX 	    HEX 1  = %d  ",HEX_1_o,"   HEX 2 = %d",HEX_2_o);
