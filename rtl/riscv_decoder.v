@@ -17,15 +17,20 @@ module riscv_decoder
   output  reg                    jalr_o              //         Signal about the Jarl unconditional jump instruction
 );
 
-assign opcode = fetched_instr_i[6:0];
+wire  [4:0]  opcode;
+wire  [6:0]  func7;
+wire  [2:0]  func3;
+
+assign opcode = fetched_instr_i[6:2];
 assign func3  = fetched_instr_i[14:12];
 assign func7  = fetched_instr_i[31:25];
 
 always @ ( * ) begin
-  { mem_req_o, mem_we_o, mem_size_o, gpr_we_a_o, wb_src_sel_o, illegal_instr_o, branch_o, jal_o, jalr_o } <= {9'b0};
-  ex_op_a_sel_o <= 2'b0;
-  ex_op_b_sel_o <= 2'b0;
-  alu_op_o      <= 0;
+  { mem_req_o, mem_we_o, mem_size_o, gpr_we_a_o, wb_src_sel_o, branch_o, jal_o, jalr_o } = {8'b0};
+  ex_op_a_sel_o = 2'b0;
+  ex_op_b_sel_o = 2'b0;
+  alu_op_o      = 0;
+  illegal_instr_o = fetched_instr_i[1:0] == 2'b11 ? 0 : 1;
 
   case (opcode)
 
@@ -54,19 +59,27 @@ always @ ( * ) begin
         ex_op_a_sel_o = 2'd0;
         ex_op_b_sel_o = 3'd1;
 
-        case ({func3,func7})
-          0:   begin alu_op_o <= `ALU_ADD  ; end
-          1:   begin alu_op_o <= `ALU_SLL  ; end
-          2:   begin alu_op_o <= `ALU_SLTS ; end
-          3:   begin alu_op_o <= `ALU_SLTU ; end
-          4:   begin alu_op_o <= `ALU_XOR  ; end
-          5:   begin alu_op_o <= `ALU_SRL  ; end
-          517: begin alu_op_o <= `ALU_SRA  ; end
-          6:   begin alu_op_o <= `ALU_OR   ; end
-          7:   begin alu_op_o <= `ALU_AND  ; end
-          default: illegal_instr_o <= 1 ;
+        case (func3)
+            0 : alu_op_o = `ALU_ADD;
+            2 : alu_op_o = `ALU_SLTS;
+            3 : alu_op_o = `ALU_SLTU;
+            4 : alu_op_o = `ALU_XOR;
+            7 : alu_op_o = `ALU_AND;
+            6 : alu_op_o = `ALU_OR;
+            1 : begin
+                if (func7 == 7'b0000000)
+                    alu_op_o = `ALU_SLL;
+                else
+                    illegal_instr_o = 1'b1;
+            end
+            5 : case (func7)
+                        7'b0000000 : alu_op_o = `ALU_SRL;
+                        7'b0100000 : alu_op_o = `ALU_SRA;
+                        default: illegal_instr_o = 1'b1;
+                    endcase
+            default: illegal_instr_o = 1'b1;
         endcase
-      end
+    end
 
     `AUIPC    :
       begin
@@ -83,7 +96,7 @@ always @ ( * ) begin
       alu_op_o      = `ALU_ADD;
       mem_we_o      = 1;
       mem_req_o     = 1;
-      case (funct3)
+      case (func3)
           3'b000  : mem_size_o  = `LDST_B;
           3'b001  : mem_size_o  = `LDST_H;
           3'b010  : mem_size_o  = `LDST_W;
@@ -94,23 +107,23 @@ always @ ( * ) begin
     `OP       :
       begin
         case ({func7,func3})
-          0:  alu_op_o <= `ALU_ADD ;
-          512:alu_op_o <= `ALU_SUB ;
-          4:  alu_op_o <= `ALU_XOR ;
-          6:  alu_op_o <= `ALU_OR ;
-          7:  alu_op_o <= `ALU_AND ;
-          1:  alu_op_o <= `ALU_SLL ;
-          5:  alu_op_o <= `ALU_SRL ;
-          517:alu_op_o <= `ALU_SRA ;
-          2:  alu_op_o <= `ALU_SLTS ;
-          3:  alu_op_o <= `ALU_SLTU ;
+          0 : alu_op_o = `ALU_ADD;
+          256 : alu_op_o = `ALU_SUB;
+          1 : alu_op_o = `ALU_SLL;
+          2 : alu_op_o = `ALU_SLTS;
+          3 : alu_op_o = `ALU_SLTU;
+          4 : alu_op_o = `ALU_XOR;
+          5 : alu_op_o = `ALU_SRL;
+          261 : alu_op_o = `ALU_SRA;
+          6 : alu_op_o = `ALU_OR;
+          7 : alu_op_o = `ALU_AND;
           default: illegal_instr_o <= 1 ;
         endcase
       end
 
     `LUI      :
       begin
-        gpr_we_a_o = 1;
+        gpr_we_a_o    = 1;
         alu_op_o      = `ALU_ADD;
         ex_op_a_sel_o = 2'd2;
         ex_op_b_sel_o = 3'd2;
@@ -120,8 +133,8 @@ always @ ( * ) begin
       begin
       ex_op_a_sel_o = 2'd0;
       ex_op_b_sel_o = 3'd0;
-      branch_o = 1;
-      case (funct3)
+      branch_o      = 1;
+        case (func3)
           0 : alu_op_o = `ALU_EQ;
           1 : alu_op_o = `ALU_NE;
           4 : alu_op_o = `ALU_LTS;
@@ -129,6 +142,7 @@ always @ ( * ) begin
           6 : alu_op_o = `ALU_LTU;
           7 : alu_op_o = `ALU_GEU;
           default: illegal_instr_o = 1'b1;
+        endcase
       end
 
     `JALR     :
@@ -151,7 +165,7 @@ always @ ( * ) begin
 
     `MISC_MEM ,
     `SYSTEM   :;
-    default: ;
+    default: illegal_instr_o = 1'b1  ;
   endcase
 end
 

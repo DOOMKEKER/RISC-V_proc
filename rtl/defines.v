@@ -1,7 +1,7 @@
 `define RESET_ADDR 32'h00000000
 
 `define ALU_OP_WIDTH  6
-/*
+
 `define ALU_ADD   6'b011000
 `define ALU_SUB   6'b011001
 
@@ -25,7 +25,7 @@
 // set lower than operations
 `define ALU_SLTS  6'b000010
 `define ALU_SLTU  6'b000011
-*/
+/*
 
 `define ALU_ADD  6'b0000
 `define ALU_SUB  6'b0001
@@ -43,7 +43,7 @@
 `define ALU_NE  6'b1101
 `define ALU_SLTS  6'b1110
 `define ALU_SLTU  6'b1111
-
+*/
 // opcodes
 `define LOAD_OPCODE      5'b00_000
 `define MISC_MEM_OPCODE  5'b00_011
@@ -58,17 +58,17 @@
 `define SYSTEM_OPCODE    5'b11_100
 
 //opcodes for me
-`define LOAD             7'b0000011
-`define MISC_MEM         7'b0001111
-`define OP_IMM           7'b0010011
-`define AUIPC            7'b0010111
-`define STORE            7'b0100011
-`define OP               7'b0110011
-`define LUI              7'b0110111
-`define BRANCH           7'b1100011
-`define JALR             7'b1100111
-`define JAL              7'b1101111
-`define SYSTEM           7'b1110011
+`define LOAD             7'b00000
+`define MISC_MEM         7'b00011
+`define OP_IMM           7'b00100
+`define AUIPC            7'b00101
+`define STORE            7'b01000
+`define OP               7'b01100
+`define LUI              7'b01101
+`define BRANCH           7'b11000
+`define JALR             7'b11001
+`define JAL              7'b11011
+`define SYSTEM           7'b11100
 
 // dmem type load store
 `define LDST_B           3'b000
