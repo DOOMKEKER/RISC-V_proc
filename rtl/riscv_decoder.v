@@ -106,6 +106,9 @@ always @ ( * ) begin
 
     `OP       :
       begin
+        ex_op_b_sel_o = 3'd0;
+        ex_op_a_sel_o = 2'd0;
+        gpr_we_a_o    = 1;
         case ({func7,func3})
           0 : alu_op_o = `ALU_ADD;
           256 : alu_op_o = `ALU_SUB;
