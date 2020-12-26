@@ -72,6 +72,13 @@ always @ ( * ) begin
 										result_o <= 0 ;
 										comparsion_result_o <= result_o;
 					 end
+		`ALU_SLTS : begin
+						result_o <= ($signed(operand_a_i) < $signed(operand_b_i)) ? 32'd1 : 32'd0;
+						comparision_result_o <= ($signed(operand_a_i) < $signed(operand_b_i)) ? 1'b1 : 1'b0;
+					end
+		`ALU_SLTU : begin
+						result_o <= (operand_a_i < operand_b_i) ? 32'd1 : 32'd0;
+						comparision_result_o <= (operand_a_i < operand_b_i) ? 1'b1 : 1'b0;
 		endcase
 end
 
