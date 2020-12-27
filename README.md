@@ -1,2 +1,2 @@
 # RISC-V_proc
-Processor on architecture RISC-V that i mad on labs
+The processor on the RISC-V architecture that I made on APS.
