@@ -5,8 +5,6 @@
   
 .text
 __start:
-  li x18, 0x66000001
-  #lw x21, x18
   li x21, 8
   la x19, array
   lw x20, 0(x19)

@@ -2,7 +2,7 @@
 `include "defines.v"
 
 module miriscv_alu (
-		input 		[3:0] 			operator_i,
+		input 		[5:0] 			operator_i,
 		input 		[31:0]			operand_a_i,
 		input 		[31:0]			operand_b_i,
 		output 	reg[31:0]			result_o,

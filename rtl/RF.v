@@ -20,7 +20,7 @@ module RF
   always @ ( posedge clk_i ) begin
     if (WE3_i) RAM[addr_3_i] <= WD3_i;
     if (reset_i) begin
-      for(i = 1; i < 32; i = i + 1 ) begin
+      for(i = 0; i < 32; i = i + 1 ) begin
         RAM[i] <= 32'b0;
       end
     end
