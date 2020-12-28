@@ -92,3 +92,10 @@
 // writeback source selection
 `define WB_EX_RESULT     1'b0
 `define WB_LSU_DATA      1'b1
+
+`define STATIC_BEGIN  32'h10008000
+`define STATIC_END    32'h100081ff
+`define HEAP_BEGIN    32'h10008200
+`define HEAP_END      32'h100083ff
+`define STACK_BEGIN   32'hbffffdf0
+`define STACK_END     32'hbffffff0
