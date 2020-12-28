@@ -1,13 +1,10 @@
 .global __start
 
-.data
-  array: .word 0,0
-  
 .text
 __start:
-  li x21, 8
-  la x19, array
-  lw x20, 0(x19)
+  li x18, 0x10
+  lw x21, 0(x18)
+  li x20, 0
 
 Loop:  
   beq x21, x0, Exit 
